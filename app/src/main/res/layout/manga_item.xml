@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="@dimen/card_elevation_height"
+        android:layout_marginBottom="@dimen/card_bottom_padding"
+        app:cardCornerRadius="@dimen/card_corner_radius">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ImageView
+                android:padding="@dimen/manga_cover_padding"
+                android:layout_width="120dp"
+                android:layout_height="150dp"
+                android:scaleType="fitXY"
+                android:id="@+id/manga_cover"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/manga_title_font_size"
+                android:textStyle="bold"
+                android:layout_toEndOf="@id/manga_cover"
+                android:id="@+id/manga_title"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/manga_description_font_size"
+                android:layout_below="@id/manga_title"
+                android:layout_toEndOf="@id/manga_cover"
+                android:id="@+id/manga_directories"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/manga_description_font_size"
+                android:layout_below="@id/manga_directories"
+                android:layout_toEndOf="@id/manga_cover"
+                android:id="@+id/manga_author"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/manga_description_font_size"
+                android:layout_below="@id/manga_author"
+                android:layout_toEndOf="@id/manga_cover"
+                android:id="@+id/manga_rank"/>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
