@@ -122,7 +122,7 @@ public class Model {
 
 
         } catch (IOException e) {
-            throw new IOException("Error in Page Retrieval _get_manga_list");
+            throw new IOException("_get_manga_list: Error in Page Retrieval");
 
         }
         return manga.toArray(new MangaItem[manga.size()]);
