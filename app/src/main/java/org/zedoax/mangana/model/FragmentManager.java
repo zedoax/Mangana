@@ -1,12 +1,12 @@
 package org.zedoax.mangana.model;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
 import org.zedoax.mangana.R;
+import org.zedoax.mangana.objects.MangaItem;
 import org.zedoax.mangana.view.InfoFragment;
 import org.zedoax.mangana.view.MangaFragment;
 import org.zedoax.mangana.view.ViewerFragment;
@@ -17,6 +17,7 @@ import org.zedoax.mangana.view.ViewerFragment;
 
 public class FragmentManager {
 
+    private static FragmentManager instance;
     public static int MANGA_FRAGMENT = 0;
     public static int INFO_FRAGMENT = 1;
     public static int VIEWER_FRAGMENT = 2;
@@ -26,7 +27,7 @@ public class FragmentManager {
     private InfoFragment infoFragment;
     private ViewerFragment viewerFragment;
 
-    public FragmentManager(Context context) {
+    private FragmentManager(Context context) {
         fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
 
         mangaFragment = new MangaFragment();
@@ -35,30 +36,63 @@ public class FragmentManager {
 
     }
 
-    public void changeFragment(int fragment_id) {
+    public void changeFragment(int fragment_id, MangaItem mangaItem) {
         // Creates the initial Fragment Transaction to open manga page
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         // Fragment Transaction that moves new Manga Fragment to the Frame Layout container
-        if(fragment_id == MANGA_FRAGMENT) {
-            transaction.replace(R.id.container, mangaFragment);
-
-        } else if(fragment_id == INFO_FRAGMENT) {
-            transaction.replace(R.id.container, infoFragment);
-
-        } else if(fragment_id == VIEWER_FRAGMENT) {
-            transaction.replace(R.id.container, viewerFragment);
-
-        } else {
-            transaction.replace(R.id.container, mangaFragment);
-
+        if(fragment_id == INFO_FRAGMENT) {
+            infoFragment.setMangaItem(mangaItem);
         }
+        transaction.replace(R.id.container, getFragment(fragment_id));
 
         // Sets the stackback.  Might be changed later?
         transaction.addToBackStack(null);
 
         // Commit the Transaction (Shows the new Fragment)
         transaction.commit();
+
+    }
+
+    public void changeFragment(int fragment_id) {
+        // Creates the initial Fragment Transaction to open manga page
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        // Fragment Transaction that moves new Manga Fragment to the Frame Layout container
+        transaction.replace(R.id.container, getFragment(fragment_id));
+
+        // Sets the stackback.  Might be changed later?
+        transaction.addToBackStack(null);
+
+        // Commit the Transaction (Shows the new Fragment)
+        transaction.commit();
+
+    }
+
+    public Fragment getFragment(int fragment_id) {
+        switch (fragment_id) {
+            case 0:
+                return mangaFragment;
+
+            case 1:
+                return infoFragment;
+
+            case 2:
+                return viewerFragment;
+
+            default:
+                return mangaFragment;
+
+        }
+
+    }
+
+    public static FragmentManager getInstance(Context context) {
+        if (instance==null) {
+            instance = new FragmentManager(context);
+
+        }
+        return instance;
 
     }
 

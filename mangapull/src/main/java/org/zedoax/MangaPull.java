@@ -2,7 +2,6 @@ package org.zedoax;
 
 import org.zedoax.model.Model;
 import org.zedoax.objects.MangaItem;
-
 import java.io.IOException;
 
 public class MangaPull {
@@ -16,6 +15,18 @@ public class MangaPull {
 
         }
         return new String[0];
+    }
+
+    public String[] request_chapters(String manga_name) {
+        try {
+            return model._get_manga_chapters(manga_name);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return new String[0];
+
     }
 
     /*public String[] request_manga_info(String manga_name, String manga_chapter) {

@@ -25,6 +25,7 @@ import static android.content.ContentValues.TAG;
 
 public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> {
     private MangaItem[] mDataset;
+
     private OnClickListener onClickListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -64,6 +65,7 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
         // Grab the context, then load the image into a view
         Context context = holder.mCover.getContext();
         if(!mDataset[position].getCoverUrl().isEmpty()) {
+            Picasso.with(context).clearCache();
             Picasso.with(context).load(mDataset[position].getCoverUrl()).into(holder.mCover);
         } else {
             Log.e(TAG, "onBindViewHolder: Failed to Load Image Resource");
@@ -77,11 +79,11 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        System.out.println(mDataset[holder.getAdapterPosition()].getInfoUrl());
+                        onClickListener.onClick(position);
                     }
                 }
+
         );
-        System.out.println(mDataset[position].getDirectories());
 
     }
 
@@ -91,7 +93,11 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
      */
     public void update(ArrayList<MangaItem> dataset) {
         mDataset = dataset.toArray(new MangaItem[dataset.size()]);
-        notifyDataSetChanged();
+
+    }
+
+    public MangaItem get(int position) {
+        return mDataset[position];
 
     }
 
@@ -105,8 +111,8 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
 
     }
 
-    public abstract class OnClickListener {
-        public abstract void onClick();
+    public interface OnClickListener {
+        void onClick(int position);
 
     }
 
