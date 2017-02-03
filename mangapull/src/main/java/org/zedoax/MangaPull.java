@@ -5,7 +5,14 @@ import org.zedoax.objects.MangaItem;
 import java.io.IOException;
 
 public class MangaPull {
-    Model model = new Model();
+    private static Model model = new Model();
+
+    private static MangaPull instance;
+
+    public static MangaPull getInstance() {
+        return (instance != null) ? instance : (instance = new MangaPull());
+
+    }
 
     public String[] request_chapter(String manga_name, String manga_chapter) {
         try {
@@ -20,6 +27,18 @@ public class MangaPull {
     public String[] request_chapters(String manga_name) {
         try {
             return model._get_manga_chapters(manga_name);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+        return new String[0];
+
+    }
+
+    public String[] request_chapter_urls(String manga_name) {
+        try {
+            return model._get_manga_chapter_urls(manga_name);
 
         } catch (Exception e) {
             e.printStackTrace();

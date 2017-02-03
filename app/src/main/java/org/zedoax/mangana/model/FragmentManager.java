@@ -10,6 +10,7 @@ import org.zedoax.mangana.objects.MangaItem;
 import org.zedoax.mangana.view.InfoFragment;
 import org.zedoax.mangana.view.MangaFragment;
 import org.zedoax.mangana.view.ViewerFragment;
+import org.zedoax.mangana.view.ViewerFragmentActivity;
 
 /**
  * Created by Zedoax on 1/30/2017.
@@ -20,19 +21,16 @@ public class FragmentManager {
     private static FragmentManager instance;
     public static int MANGA_FRAGMENT = 0;
     public static int INFO_FRAGMENT = 1;
-    public static int VIEWER_FRAGMENT = 2;
 
     private android.support.v4.app.FragmentManager fragmentManager;
     private MangaFragment mangaFragment;
     private InfoFragment infoFragment;
-    private ViewerFragment viewerFragment;
 
     private FragmentManager(Context context) {
         fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
 
         mangaFragment = new MangaFragment();
         infoFragment = new InfoFragment();
-        viewerFragment = new ViewerFragment();
 
     }
 
@@ -76,9 +74,6 @@ public class FragmentManager {
 
             case 1:
                 return infoFragment;
-
-            case 2:
-                return viewerFragment;
 
             default:
                 return mangaFragment;

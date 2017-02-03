@@ -1,6 +1,7 @@
 package org.zedoax.mangana.model;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,8 +12,6 @@ import android.widget.TextView;
 
 import org.zedoax.mangana.R;
 import org.zedoax.mangana.objects.MangaItem;
-
-import java.util.ArrayList;
 
 import it.sephiroth.android.library.picasso.Picasso;
 
@@ -30,6 +29,8 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     public static class ChapterViewHolder extends RecyclerView.ViewHolder {
         // Create variable holders for view components
+        private CardView cLeft;
+        private CardView cRight;
         private TextView mLeft;
         private TextView mRight;
 
@@ -38,6 +39,8 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
             // Initialize the missing components, by finding their id
             mLeft = (TextView) itemView.findViewById(R.id.info_chapter_left_text);
             mRight = (TextView) itemView.findViewById(R.id.info_chapter_right_text);
+            cLeft = (CardView) itemView.findViewById(R.id.info_chapter_left);
+            cRight = (CardView) itemView.findViewById(R.id.info_chapter_right);
 
         }
 
@@ -97,11 +100,11 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
         switch (getItemViewType(position)) {
             case 0:
-                Context context = ((MangaViewHolder)holder).mCover.getContext();
+                Context context = ((MangaViewHolder) holder).mCover.getContext();
                 if (!mItem.getCoverUrl().isEmpty()) {
                     Picasso.with(context).clearCache();
                     Picasso.with(context).load(mItem.getCoverUrl()).into(((MangaViewHolder) holder).mCover);
@@ -109,25 +112,45 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     Log.e(TAG, "onBindViewHolder: Failed to Load Image Resource");
                 }
                 // Loads additional data into text fields
-                ((MangaViewHolder)holder).mTitle.setText(mItem.getTitle());
-                ((MangaViewHolder)holder).mDirectories.setText(mItem.getDirectories());
-                ((MangaViewHolder)holder).mAuthor.setText(mItem.getAuthor());
-                ((MangaViewHolder)holder).mRank.setText(mItem.getRank());
-                ((MangaViewHolder)holder).mDescription.setText(mItem.getDescription());
+                ((MangaViewHolder) holder).mTitle.setText(mItem.getTitle());
+                ((MangaViewHolder) holder).mDirectories.setText(mItem.getDirectories());
+                ((MangaViewHolder) holder).mAuthor.setText(mItem.getAuthor());
+                ((MangaViewHolder) holder).mRank.setText(mItem.getRank());
+                ((MangaViewHolder) holder).mDescription.setText(mItem.getDescription());
                 break;
             default:
-                ((ChapterViewHolder)holder).mLeft.setText(mDataset[position]);
-                if(mDataset.length % 2 == 0) {
-                    ((ChapterViewHolder)holder).mRight.setText(mDataset[position]);
+
+                ((ChapterViewHolder) holder).mLeft.setText(mDataset[(position * 2) - 2]);
+                ((ChapterViewHolder) holder).mLeft.setOnClickListener(
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                onClickListener.onClick(mItem.getIndex(), mItem.getChapters()[(position * 2) - 2]);
+                            }
+                        }
+                );
+                if(position != getItemCount() - 1 || mDataset.length % 2 == 0) {
+                    ((ChapterViewHolder) holder).mRight.setText(mDataset[(position * 2) - 1]);
+                    ((ChapterViewHolder) holder).mRight.setOnClickListener(
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    onClickListener.onClick(mItem.getIndex(), mItem.getChapters()[(position * 2) - 1]);
+                                }
+                            }
+                    );
+                } else {
+                    ((ChapterViewHolder) holder).mRight.setText("");
+                    ((ChapterViewHolder) holder).cRight.setVisibility(View.INVISIBLE);
 
                 }
-                else {
-                    ((ChapterViewHolder)holder).mRight.setVisibility(View.INVISIBLE);
-
+                /*
+                if (position * 2 == mDataset.length + 1) {
+                    ((ChapterViewHolder) holder).cRight.setVisibility(View.INVISIBLE);
                 }
-
-
+                */
         }
+
     }
 
     /**
@@ -146,7 +169,7 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     public int getItemCount() {
-        return mDataset.length;
+        return (mDataset.length % 2 == 0) ? mDataset.length / 2 + 1: mDataset.length / 2 + 2;
 
     }
 
@@ -156,7 +179,7 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
     }
 
     public interface OnClickListener {
-        void onClick(int position);
+        void onClick(String index, String chapter);
 
     }
 

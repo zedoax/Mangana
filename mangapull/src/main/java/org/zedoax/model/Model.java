@@ -48,12 +48,32 @@ public class Model {
     public String[] _get_manga_chapters(String manga_name) throws IOException {
         List<String> chapters = new ArrayList<>();
         try {
-            System.out.println(BASE_URL+MANGA_URL_EXT + manga_name + "/");
             Document page = Jsoup.connect(BASE_URL + MANGA_URL_EXT + manga_name + "/").get();
             Elements manga_chapters = page.getElementsByClass("manga-chapters");
             Elements chaps = manga_chapters.get(0).getElementsByTag("a");
             for (Element chap : chaps) {
                 chapters.add(chap.ownText());
+            }
+
+
+        } catch (IOException e) {
+            throw new IOException("Error in Page Retrieval _get_manga_chapters");
+
+        }
+        return chapters.toArray(new String[chapters.size()]);
+
+    }
+
+    public String[] _get_manga_chapter_urls(String manga_name) throws IOException {
+        List<String> chapters = new ArrayList<>();
+        try {
+            Document page = Jsoup.connect(BASE_URL + MANGA_URL_EXT + manga_name + "/").get();
+            Elements manga_chapters = page.getElementsByClass("manga-chapters");
+            Elements chaps = manga_chapters.get(0).getElementsByTag("a");
+            for (Element chap : chaps) {
+                int start = chap.attr("href").indexOf(manga_name + "/c") + manga_name.length() + 1;
+                chapters.add(chap.attr("href").substring(start, start + 4));
+
             }
 
 

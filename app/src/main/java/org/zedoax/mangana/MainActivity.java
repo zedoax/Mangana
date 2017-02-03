@@ -1,6 +1,7 @@
 package org.zedoax.mangana;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -10,9 +11,11 @@ import org.zedoax.MangaPull;
 
 import org.zedoax.mangana.model.FragmentManager;
 import org.zedoax.mangana.objects.MangaItem;
+import org.zedoax.mangana.view.InfoFragment;
 import org.zedoax.mangana.view.MangaFragment;
+import org.zedoax.mangana.view.ViewerFragmentActivity;
 
-public class MainActivity extends AppCompatActivity implements MangaFragment.OnMangaCallbackListener {
+public class MainActivity extends AppCompatActivity implements MangaFragment.OnMangaCallbackListener, InfoFragment.OnInfoCallbackListener {
     private MangaPull mpull = new MangaPull();
     private FragmentManager fragmentManager;
 
@@ -27,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements MangaFragment.OnM
         // ((InfoFragment)fragmentManager.getFragment(FragmentManager.INFO_FRAGMENT))
         ((MangaFragment)fragmentManager.getFragment(FragmentManager.MANGA_FRAGMENT))
                 .setOnMangaCallbackListener(this);
+        ((InfoFragment)fragmentManager.getFragment(FragmentManager.INFO_FRAGMENT))
+                .setOnInfoCallbackListener(this);
 
         fragmentManager.changeFragment(FragmentManager.MANGA_FRAGMENT);
 
@@ -56,7 +61,21 @@ public class MainActivity extends AppCompatActivity implements MangaFragment.OnM
     }
 
     @Override
+    public void onCallback(String index, String chapter) {
+        ViewerFragmentActivity vfa = new ViewerFragmentActivity();
+        Bundle args = new Bundle();
+        args.putString("index", index);
+        args.putString("chapter", chapter);
+        vfa.setArguments(args);
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.container, vfa);
+        transaction.commit();
+        vfa.update(index, chapter);
+    }
+
+    @Override
     public void onCallback(MangaItem mangaItem) {
         fragmentManager.changeFragment(FragmentManager.INFO_FRAGMENT, mangaItem);
     }
+
 }

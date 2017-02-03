@@ -8,28 +8,19 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import org.zedoax.MangaPull;
 import org.zedoax.mangana.R;
 import org.zedoax.mangana.model.InfoAdapter;
 import org.zedoax.mangana.objects.MangaItem;
 
-import it.sephiroth.android.library.picasso.Picasso;
-
 /**
  * Created by Zedoax on 1/30/2017.
  */
 
-public class InfoFragment extends Fragment {
+public class InfoFragment extends Fragment implements InfoAdapter.OnClickListener {
     private MangaItem mangaItem;
-    private TextView titleView;
-    private TextView directoriesView;
-    private TextView authorView;
-    private TextView rankView;
-    private TextView descriptionView;
-    private ImageView mImageView;
+    private MangaPull mp;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -41,9 +32,6 @@ public class InfoFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Finds and assigns the Image View
-        // mImageView = (ImageView)getView().findViewById(R.id.info_cover);
-
         // Finds and assigns the Text View
         mRecyclerView = (RecyclerView)getView().findViewById(R.id.info_recycler_view);
 
@@ -51,8 +39,12 @@ public class InfoFragment extends Fragment {
         mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+        // Initialize the API toolchain
+        mp = new MangaPull();
+
         mInfoAdapter = new InfoAdapter(mangaItem, mangaItem.getChapters());
         mRecyclerView.setAdapter(mInfoAdapter);
+        mInfoAdapter.setOnClickListener(this);
 
         onRefresh();
 
@@ -71,23 +63,11 @@ public class InfoFragment extends Fragment {
     }
 
     public void refresh() {
-        // Loads the cover image
-        // Picasso.with(mImageView.getContext()).clearCache();
-        // Picasso.with(mImageView.getContext()).load(mangaItem.getCoverUrl()).into(mImageView);
 
-
-        MangaPull mp = new MangaPull();
-        mangaItem.setChapters(mp.request_chapters(mangaItem.getIndex()));
-        mInfoAdapter.update(mangaItem, mangaItem.getChapters());
+        mangaItem.setChapters(mp.request_chapter_urls(mangaItem.getIndex()));
+        mInfoAdapter.update(mangaItem, mp.request_chapters(mangaItem.getIndex()));
 
         // Load the text fields out of data from the MangaItem
-        /*
-        titleView.setText(mangaItem.getTitle());
-        directoriesView.setText(mangaItem.getDirectories());
-        authorView.setText(mangaItem.getAuthor());
-        rankView.setText(mangaItem.getRank());
-        descriptionView.setText(mangaItem.getDescription());
-        */
 
     }
 
@@ -132,8 +112,13 @@ public class InfoFragment extends Fragment {
 
     }
 
-    public static abstract class OnInfoCallbackListener {
-        public abstract void onCallback();
+    @Override
+    public void onClick(String index, String chapter) {
+        onInfoCallbackListener.onCallback(index, chapter);
+    }
+
+    public interface OnInfoCallbackListener {
+        void onCallback(String index, String chapter);
     }
 
 }
