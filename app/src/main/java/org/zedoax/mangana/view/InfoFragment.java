@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,8 @@ import org.zedoax.MangaPull;
 import org.zedoax.mangana.R;
 import org.zedoax.mangana.model.InfoAdapter;
 import org.zedoax.mangana.objects.MangaItem;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by Zedoax on 1/30/2017.
@@ -32,8 +35,22 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.info_fragment, container, false);
+
+        Bundle args = this.getArguments();
+        if(savedInstanceState == null) {
+            mangaItem = (MangaItem) args.getSerializable("manga");
+        } else {
+            mangaItem = (MangaItem) savedInstanceState.getSerializable("manga");
+        }
+
         // Finds and assigns the Text View
-        mRecyclerView = (RecyclerView)getView().findViewById(R.id.info_recycler_view);
+        mRecyclerView = (RecyclerView)view.findViewById(R.id.info_recycler_view);
 
         // Create the Linear Layout Manager
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -46,26 +63,23 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
         mRecyclerView.setAdapter(mInfoAdapter);
         mInfoAdapter.setOnClickListener(this);
 
-        onRefresh();
+        if (savedInstanceState == null) {
+            onRefresh();
+        }
 
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.info_fragment, container, false);
-
-    }
-
-    public void setMangaItem(MangaItem mangaItem) {
-        this.mangaItem = mangaItem;
+        return view;
 
     }
 
     public void refresh() {
-
-        mangaItem.setChapters(mp.request_chapter_urls(mangaItem.getIndex()));
-        mInfoAdapter.update(mangaItem, mp.request_chapters(mangaItem.getIndex()));
+        try {
+            if(mangaItem != null) {
+                mangaItem.setChapters(mp.request_chapter_urls(mangaItem.getIndex()));
+                mInfoAdapter.update(mangaItem, mp.request_chapters(mangaItem.getIndex()));
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "refresh: failed to load fresh resources", e);
+        }
 
         // Load the text fields out of data from the MangaItem
 

@@ -79,7 +79,7 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        onClickListener.onClick(position);
+                        onClickListener.onClick(mDataset[holder.getAdapterPosition()]);
                     }
                 }
 
@@ -91,8 +91,8 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
      * Method to use when updating the dataset used by RecyclerView
      * @param dataset the data to replace the old
      */
-    public void update(ArrayList<MangaItem> dataset) {
-        mDataset = dataset.toArray(new MangaItem[dataset.size()]);
+    public void update(MangaItem[] dataset) {
+        mDataset = dataset;
 
     }
 
@@ -112,7 +112,7 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
     }
 
     public interface OnClickListener {
-        void onClick(int position);
+        void onClick(MangaItem item);
 
     }
 

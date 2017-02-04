@@ -1,5 +1,6 @@
 package org.zedoax.mangana.objects;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -8,7 +9,7 @@ import java.util.Arrays;
  * @author Elijah Bendinsky     *
  ********************************/
 
-public class MangaItem {
+public class MangaItem implements Serializable {
     private String cover_url;
     private String index;
     private String title;

@@ -16,14 +16,12 @@ import org.zedoax.mangana.R;
 import org.zedoax.mangana.model.MangaAdapter;
 import org.zedoax.mangana.objects.MangaItem;
 
-import java.util.ArrayList;
-
 /**
  * Created by Zedoax on 1/29/2017.
  */
 
 public class MangaFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, MangaAdapter.OnClickListener {
-    private ArrayList<MangaItem> manga = new ArrayList<>();
+    private MangaItem[] manga;
     private RecyclerView mRecyclerView;
     private MangaAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -35,22 +33,6 @@ public class MangaFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Finds the Recycler View in the xml layout
-        mRecyclerView = (RecyclerView)getView().findViewById(R.id.manga_list);
-
-        // Finds and Initializes the Swipey Swipe Refresh Thingy
-        mSwipeRefreshLayout = (SwipeRefreshLayout)getView().findViewById(R.id.manga_swipe_refresh);
-        ((SwipeRefreshLayout)getView().findViewById(R.id.manga_swipe_refresh)).setOnRefreshListener(this);
-
-        // Create the Linear Layout Manager
-        mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        // Create and set the Adapter
-        mAdapter = new MangaAdapter(manga.toArray(new MangaItem[manga.size()]));
-        mAdapter.setOnClickListener(this);
-        mRecyclerView.setAdapter(mAdapter);
-
         onRefresh();
 
     }
@@ -58,7 +40,27 @@ public class MangaFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.manga_fragment, container, false);
+        View view = inflater.inflate(R.layout.manga_fragment, container, false);
+
+        Bundle args = this.getArguments();
+
+        // Finds the Recycler View in the xml layout
+        mRecyclerView = (RecyclerView)view.findViewById(R.id.manga_list);
+
+        // Finds and Initializes the Swipey Swipe Refresh Thingy
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.manga_swipe_refresh);
+        ((SwipeRefreshLayout)view.findViewById(R.id.manga_swipe_refresh)).setOnRefreshListener(this);
+
+        // Create the Linear Layout Manager
+        mLayoutManager = new LinearLayoutManager(getContext());
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // Create and set the Adapter
+        mAdapter = new MangaAdapter((MangaItem[])args.get("mangae"));
+        mAdapter.setOnClickListener(this);
+        mRecyclerView.setAdapter(mAdapter);
+
+        return view;
 
     }
 
@@ -79,10 +81,10 @@ public class MangaFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                 new Runnable() {
                     @Override
                     public void run() {
-                        manga.clear();
-                        for (org.zedoax.objects.MangaItem m: mp.request_mangae(null)) {
-                            manga.add(new MangaItem(m));
-
+                        org.zedoax.objects.MangaItem[] mangae = mp.request_mangae(null);
+                        manga = new MangaItem[mangae.length];
+                        for (int i = 0; i < mangae.length; i++) {
+                            manga[i] = new MangaItem(mangae[i]);
                         }
 
                         mRecyclerView.post(
@@ -111,8 +113,8 @@ public class MangaFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     @Override
-    public void onClick(int position) {
-        onMangaCallbackListener.onCallback(mAdapter.get(position));
+    public void onClick(MangaItem item) {
+        onMangaCallbackListener.onCallback(item);
     }
 
     public interface OnMangaCallbackListener {

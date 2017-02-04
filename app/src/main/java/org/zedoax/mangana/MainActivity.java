@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements MangaFragment.OnM
         ((InfoFragment)fragmentManager.getFragment(FragmentManager.INFO_FRAGMENT))
                 .setOnInfoCallbackListener(this);
 
-        fragmentManager.changeFragment(FragmentManager.MANGA_FRAGMENT);
+        fragmentManager.changeFragment(new MangaItem[0]);
 
 
     }
@@ -62,20 +62,19 @@ public class MainActivity extends AppCompatActivity implements MangaFragment.OnM
 
     @Override
     public void onCallback(String index, String chapter) {
-        ViewerFragmentActivity vfa = new ViewerFragmentActivity();
-        Bundle args = new Bundle();
-        args.putString("index", index);
-        args.putString("chapter", chapter);
-        vfa.setArguments(args);
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.replace(R.id.container, vfa);
-        transaction.commit();
-        vfa.update(index, chapter);
+        fragmentManager.changeFragment(index, chapter);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        fragmentManager.goBack();
+
     }
 
     @Override
     public void onCallback(MangaItem mangaItem) {
-        fragmentManager.changeFragment(FragmentManager.INFO_FRAGMENT, mangaItem);
+        fragmentManager.changeFragment(mangaItem);
     }
 
 }
