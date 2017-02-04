@@ -22,8 +22,10 @@ import static android.content.ContentValues.TAG;
  */
 
 public class InfoFragment extends Fragment implements InfoAdapter.OnClickListener {
-    private MangaItem mangaItem;
     private MangaPull mp;
+
+    private MangaItem mangaItem;
+    private String[] mangaChapters;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
@@ -34,6 +36,18 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        if (mangaItem != null) {
+            if (mangaItem.getChapters().length > 0) {
+                onFinish();
+
+            } else {
+                onRefresh();
+
+            }
+        } else {
+            onRefresh();
+
+        }
 
     }
 
@@ -63,7 +77,7 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
         mRecyclerView.setAdapter(mInfoAdapter);
         mInfoAdapter.setOnClickListener(this);
 
-        if (savedInstanceState == null) {
+        if (mangaItem.getChapters().length == 0) {
             onRefresh();
         }
 
@@ -75,7 +89,8 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
         try {
             if(mangaItem != null) {
                 mangaItem.setChapters(mp.request_chapter_urls(mangaItem.getIndex()));
-                mInfoAdapter.update(mangaItem, mp.request_chapters(mangaItem.getIndex()));
+                mangaChapters = mp.request_chapters(mangaItem.getIndex());
+                mInfoAdapter.update(mangaItem, mangaChapters);
             }
         } catch (Exception e) {
             Log.e(TAG, "refresh: failed to load fresh resources", e);
@@ -86,10 +101,10 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
     }
 
     private void onFinish() {
-        /*mAdapter.update(manga);
-        mAdapter.notifyDataSetChanged();
+        mInfoAdapter.update(mangaItem, mangaChapters);
+        mInfoAdapter.notifyDataSetChanged();
 
-        mSwipeRefreshLayout.setRefreshing(false); */
+        // mSwipeRefreshLayout.setRefreshing(false);
 
     }
 

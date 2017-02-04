@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -95,6 +97,8 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 return new MangaViewHolder(v);
             default:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.info_chapter, parent, false);
+                Animation animation = AnimationUtils.loadAnimation(parent.getContext(), R.anim.slide_in_top);
+                v.startAnimation(animation);
                 return new ChapterViewHolder(v);
         }
     }

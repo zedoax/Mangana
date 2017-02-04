@@ -2,6 +2,7 @@ package org.zedoax.mangana.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,8 +34,18 @@ public class MangaFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        onRefresh();
+        if (manga != null) {
+            if (manga.length > 0) {
+                onFinish();
 
+            } else {
+                onRefresh();
+
+            }
+        } else {
+            onRefresh();
+
+        }
     }
 
     @Nullable
@@ -76,7 +87,6 @@ public class MangaFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onRefresh() {
         mSwipeRefreshLayout.setRefreshing(true);
         final MangaPull mp = new MangaPull();
-        //////////////////////////////////// Testing Ability for Cards ////////////////////////////////////////////////////////
         new Thread(
                 new Runnable() {
                     @Override

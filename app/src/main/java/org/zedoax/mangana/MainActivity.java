@@ -1,7 +1,6 @@
 package org.zedoax.mangana;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -13,7 +12,6 @@ import org.zedoax.mangana.model.FragmentManager;
 import org.zedoax.mangana.objects.MangaItem;
 import org.zedoax.mangana.view.InfoFragment;
 import org.zedoax.mangana.view.MangaFragment;
-import org.zedoax.mangana.view.ViewerFragmentActivity;
 
 public class MainActivity extends AppCompatActivity implements MangaFragment.OnMangaCallbackListener, InfoFragment.OnInfoCallbackListener {
     private MangaPull mpull = new MangaPull();

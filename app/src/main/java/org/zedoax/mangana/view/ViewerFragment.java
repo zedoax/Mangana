@@ -2,53 +2,111 @@ package org.zedoax.mangana.view;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
+import org.zedoax.MangaPull;
 import org.zedoax.mangana.R;
-
-import it.sephiroth.android.library.picasso.Picasso;
+import org.zedoax.mangana.model.ViewerAdapter;
 
 /**
- * Created by Zedoax on 1/30/2017.
+ * Created by Zedoax on 2/3/2017.
  */
 
-public class ViewerFragment extends Fragment {
-    String page;
+public class ViewerFragment extends Fragment implements ViewerAdapter.OnLastPageListener {
+    private String index;
+    private String chapter;
 
-    public static ViewerFragment getInstance(String page) {
-        ViewerFragment viewerFragment = new ViewerFragment();
-        Bundle args = new Bundle();
-        args.putString("page", page);
-        viewerFragment.setArguments(args);
-        return viewerFragment;
+    private ViewPager mViewPager;
+    private ViewerAdapter mViewerAdapter;
+    private FloatingActionButton mFAB;
+
+    private String[] pages;
+
+    public ViewerFragment() {
+        pages = new String[0];
 
     }
 
+    public void finish() {
+        mViewerAdapter.update(pages);
+        mViewerAdapter.notifyDataSetChanged();
+
+        // mSwipeRefreshLayout.setRefreshing(false);
+
+    }
+
+    public void update(final String index, final String chapter) {
+        new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        pages = MangaPull.getInstance().request_chapter(index, chapter);
+                        mViewPager.post(
+                                new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        finish();
+                                    }
+                                }
+                        );
+                    }
+                }
+        ).start();
 
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle args = this.getArguments();
-        this.page = args.getString("page");
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void onLastPage(boolean isOnLastPage) {
+        if(isOnLastPage) {
+            mFAB.setVisibility(View.VISIBLE);
+        } else {
+            mFAB.setVisibility(View.INVISIBLE);
+        }
+
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.view_item, container, false);
-        ImageView imageView = (ImageView) view.findViewById(R.id.viewer_image);
-        Picasso.with(view.getContext()).load(page).into(imageView);
+        View view = inflater.inflate(R.layout.view_fragment, container, false);
+
+        Bundle args = this.getArguments();
+        this.index = args.getString("index");
+
+        if(this.chapter != null) {
+            if (!this.chapter.equals(args.getString("chapter"))) {
+                this.chapter = args.getString("chapter");
+                update(index, chapter);
+            } else {
+                finish();
+            }
+        } else {
+            this.chapter = args.getString("chapter");
+            update(index, chapter);
+        }
+
+        // Finds and Initializes the Floating Action Button for Next actions
+        mFAB = (FloatingActionButton)view.findViewById(R.id.viewer_fab);
+
+        mViewPager = (ViewPager) view.findViewById(R.id.viewer_pager);
+
+        mViewerAdapter = new ViewerAdapter(getFragmentManager(), pages);
+        mViewerAdapter.setOnLastPageListener(this);
+
+        mViewPager.setAdapter(mViewerAdapter);
+
+        mViewPager.setOffscreenPageLimit(3);
+
         return view;
+
     }
+
+
 
 }
