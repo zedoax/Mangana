@@ -58,8 +58,8 @@ public class MangaFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         mRecyclerView = (RecyclerView)view.findViewById(R.id.manga_list);
 
         // Finds and Initializes the Swipey Swipe Refresh Thingy
-        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.manga_swipe_refresh);
-        ((SwipeRefreshLayout)view.findViewById(R.id.manga_swipe_refresh)).setOnRefreshListener(this);
+        mSwipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.manga_swype);
+        ((SwipeRefreshLayout)view.findViewById(R.id.manga_swype)).setOnRefreshListener(this);
 
         // Create the Linear Layout Manager
         mLayoutManager = new LinearLayoutManager(getContext());

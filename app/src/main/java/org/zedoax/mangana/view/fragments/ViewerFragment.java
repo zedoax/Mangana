@@ -107,6 +107,24 @@ public class ViewerFragment extends Fragment implements ViewerAdapter.OnLastPage
 
         mViewerAdapter = new ViewerAdapter(getFragmentManager(), pages);
         mViewerAdapter.setOnLastPageListener(this);
+        mViewPager.addOnPageChangeListener(
+                new android.support.v4.view.ViewPager.OnPageChangeListener() {
+                    @Override
+                    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                    }
+
+                    @Override
+                    public void onPageSelected(int position) {
+                        onLastPage((position == (pages.length - 1)));
+                    }
+
+                    @Override
+                    public void onPageScrollStateChanged(int state) {
+
+                    }
+                }
+        );
 
         mViewPager.setAdapter(mViewerAdapter);
 

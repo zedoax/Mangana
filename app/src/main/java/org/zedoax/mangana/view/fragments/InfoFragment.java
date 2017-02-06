@@ -3,6 +3,7 @@ package org.zedoax.mangana.view.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,7 +22,7 @@ import static android.content.ContentValues.TAG;
  * Created by Zedoax on 1/30/2017.
  */
 
-public class InfoFragment extends Fragment implements InfoAdapter.OnClickListener {
+public class InfoFragment extends Fragment implements InfoAdapter.OnClickListener, SwipeRefreshLayout.OnRefreshListener {
     private MangaPull mp;
 
     private MangaItem mangaItem;
@@ -29,6 +30,7 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
 
     private RecyclerView mRecyclerView;
     private RecyclerView.LayoutManager mLayoutManager;
+    private SwipeRefreshLayout mSwipeRefresh;
     private InfoAdapter mInfoAdapter;
 
     private OnInfoCallbackListener onInfoCallbackListener;
@@ -60,7 +62,7 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
         mangaItem = (MangaItem) args.getSerializable("manga");
 
         // Finds and assigns the Text View
-        mRecyclerView = (RecyclerView)view.findViewById(R.id.info_recycler_view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.info_recycler_view);
 
         // Create the Linear Layout Manager
         mLayoutManager = new LinearLayoutManager(getContext());
@@ -72,6 +74,9 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
         mInfoAdapter = new InfoAdapter(mangaItem, mangaItem.getChapters());
         mRecyclerView.setAdapter(mInfoAdapter);
         mInfoAdapter.setOnClickListener(this);
+
+        mSwipeRefresh = (SwipeRefreshLayout) view.findViewById(R.id.info_swype);
+        mSwipeRefresh.setOnRefreshListener(this);
 
         if (mangaItem.getChapters().length == 0) {
             onRefresh();
@@ -100,7 +105,7 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
         mInfoAdapter.update(mangaItem, mangaChapters);
         mInfoAdapter.notifyDataSetChanged();
 
-        // mSwipeRefreshLayout.setRefreshing(false);
+        mSwipeRefresh.setRefreshing(false);
 
     }
 
@@ -108,8 +113,9 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
         return mangaItem.getChapters();
     }
 
-    // @Override
+    @Override
     public void onRefresh() {
+        mSwipeRefresh.setRefreshing(true);
         new Thread(
                 new Runnable() {
                     @Override

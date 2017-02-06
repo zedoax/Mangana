@@ -15,8 +15,10 @@ import org.zedoax.mangana.view.fragments.MangaFragment;
 import org.zedoax.mangana.view.fragments.ViewerFragment;
 
 public class MainActivity extends AppCompatActivity implements MangaFragment.OnMangaCallbackListener, InfoFragment.OnInfoCallbackListener, ViewerFragment.OnFABClickedListener {
-    private MangaPull mpull = new MangaPull();
+
     private FragmentManager fragmentManager;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements MangaFragment.OnM
 
         fragmentManager.changeFragment(new MangaItem[0]);
 
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
     }
 
