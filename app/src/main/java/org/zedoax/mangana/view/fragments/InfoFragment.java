@@ -1,4 +1,4 @@
-package org.zedoax.mangana.view;
+package org.zedoax.mangana.view.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 
 import org.zedoax.MangaPull;
 import org.zedoax.mangana.R;
-import org.zedoax.mangana.model.InfoAdapter;
 import org.zedoax.mangana.objects.MangaItem;
+import org.zedoax.mangana.view.InfoAdapter;
 
 import static android.content.ContentValues.TAG;
 
@@ -57,11 +57,7 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
         View view = inflater.inflate(R.layout.info_fragment, container, false);
 
         Bundle args = this.getArguments();
-        if(savedInstanceState == null) {
-            mangaItem = (MangaItem) args.getSerializable("manga");
-        } else {
-            mangaItem = (MangaItem) savedInstanceState.getSerializable("manga");
-        }
+        mangaItem = (MangaItem) args.getSerializable("manga");
 
         // Finds and assigns the Text View
         mRecyclerView = (RecyclerView)view.findViewById(R.id.info_recycler_view);
@@ -106,6 +102,10 @@ public class InfoFragment extends Fragment implements InfoAdapter.OnClickListene
 
         // mSwipeRefreshLayout.setRefreshing(false);
 
+    }
+
+    public String[] getChapters() {
+        return mangaItem.getChapters();
     }
 
     // @Override

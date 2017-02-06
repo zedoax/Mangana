@@ -3,13 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:elevation="@dimen/title_card_elevation_height">
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:elevation="@dimen/title_card_elevation_height"
         app:cardCornerRadius="@dimen/card_corner_radius"
-        app:cardElevation="@dimen/card_elevation_height"
-        android:layout_marginBottom="@dimen/card_bottom_padding">
+        app:cardElevation="@dimen/title_card_elevation_height"
+        android:layout_marginBottom="@dimen/card_padding"
+        android:paddingStart="@dimen/card_padding"
+        android:paddingEnd="@dimen/card_padding"
+        android:id="@+id/info_card">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -32,6 +37,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/manga_description_font_size"
+                android:layout_marginBottom="@dimen/manga_text_margin"
                 android:layout_below="@id/info_title"
                 android:layout_toEndOf="@id/info_cover"
                 android:id="@+id/info_directories"/>
@@ -39,6 +45,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/manga_description_font_size"
+                android:layout_marginBottom="@dimen/manga_text_margin"
                 android:layout_below="@id/info_directories"
                 android:layout_toEndOf="@id/info_cover"
                 android:id="@+id/info_author"/>
@@ -47,6 +54,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/manga_cover_padding"
                 android:textSize="@dimen/manga_description_font_size"
+                android:layout_marginBottom="@dimen/manga_text_margin"
                 android:layout_below="@id/info_author"
                 android:layout_toEndOf="@id/info_cover"
                 android:id="@+id/info_rank"/>
@@ -55,6 +63,7 @@
                 android:layout_height="wrap_content"
                 android:paddingBottom="@dimen/manga_cover_padding"
                 android:textSize="@dimen/manga_description_font_size"
+                android:layout_marginBottom="@dimen/manga_text_margin"
                 android:layout_below="@id/info_rank"
                 android:layout_toEndOf="@id/info_cover"
                 android:id="@+id/info_description"/>

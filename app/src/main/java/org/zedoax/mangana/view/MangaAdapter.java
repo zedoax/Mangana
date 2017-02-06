@@ -1,4 +1,4 @@
-package org.zedoax.mangana.model;
+package org.zedoax.mangana.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -11,8 +11,6 @@ import android.widget.TextView;
 
 import org.zedoax.mangana.R;
 import org.zedoax.mangana.objects.MangaItem;
-
-import java.util.ArrayList;
 
 import it.sephiroth.android.library.picasso.Picasso;
 
@@ -63,10 +61,10 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         // Grab the context, then load the image into a view
-        Context context = holder.mCover.getContext();
+        final Context context = holder.mCover.getContext();
         if(!mDataset[position].getCoverUrl().isEmpty()) {
             Picasso.with(context).clearCache();
-            Picasso.with(context).load(mDataset[position].getCoverUrl()).into(holder.mCover);
+            Picasso.with(context).load(mDataset[position].getCoverUrl()).error(R.drawable.error_drawable).into(holder.mCover);
         } else {
             Log.e(TAG, "onBindViewHolder: Failed to Load Image Resource");
         }

@@ -36,7 +36,6 @@ public class Model {
                 image_urls.add(image.attr("data-original"));
             }
 
-
         } catch (IOException e) {
             throw new IOException("Error in Page Retrieval _get_manga_chapter");
 
@@ -71,8 +70,10 @@ public class Model {
             Elements manga_chapters = page.getElementsByClass("manga-chapters");
             Elements chaps = manga_chapters.get(0).getElementsByTag("a");
             for (Element chap : chaps) {
-                int start = chap.attr("href").indexOf(manga_name + "/c") + manga_name.length() + 1;
-                chapters.add(chap.attr("href").substring(start, start + 4));
+                String chapter = chap.attr("href");
+                chapter = chapter.substring(chapter.indexOf(manga_name + "/c") + manga_name.length() + 1);
+                int end = chapter.indexOf("/");
+                chapters.add(chapter.substring(0, end));
 
             }
 

@@ -8,9 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 
 import org.zedoax.mangana.R;
 import org.zedoax.mangana.objects.MangaItem;
-import org.zedoax.mangana.view.InfoFragment;
-import org.zedoax.mangana.view.MangaFragment;
-import org.zedoax.mangana.view.ViewerFragment;
+import org.zedoax.mangana.view.fragments.InfoFragment;
+import org.zedoax.mangana.view.fragments.MangaFragment;
+import org.zedoax.mangana.view.fragments.ViewerFragment;
 
 /**
  * Created by Zedoax on 1/30/2017.
@@ -28,6 +28,7 @@ public class FragmentManager {
     private android.support.v4.app.FragmentManager fragmentManager;
     private MangaFragment mangaFragment;
     private InfoFragment infoFragment;
+    private ViewerFragment viewerFragment;
 
     private FragmentManager(Context context) {
         fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
@@ -38,7 +39,7 @@ public class FragmentManager {
 
     public void changeFragment(String index, String chapter) {
         // Set the arguments for the Info Fragment
-        ViewerFragment viewerFragment = new ViewerFragment();
+        viewerFragment = new ViewerFragment();
         Bundle args = new Bundle();
         args.putString("index", index);
         args.putString("chapter", chapter);
@@ -51,7 +52,7 @@ public class FragmentManager {
         transaction.replace(R.id.container, viewerFragment)
 
                 // Sets the stackback.  Might be changed later?
-                .disallowAddToBackStack()
+                .addToBackStack(null)
 
                 // Commit the Transaction (Shows the new Fragment)
                 .commit();
@@ -119,6 +120,9 @@ public class FragmentManager {
 
     public Fragment getFragment(int fragment_id) {
         switch (fragment_id) {
+            case 2:
+                return viewerFragment;
+
             case 1:
                 return infoFragment;
 
@@ -129,13 +133,26 @@ public class FragmentManager {
 
     }
 
+    public int getCurrentFragment() {
+        return current_fragment;
+    }
+
+    public void popStack() {
+        fragmentManager.popBackStack();
+    }
+
     public void goBack() {
         switch (current_fragment) {
             case 2:
+                current_fragment = FragmentManager.INFO_FRAGMENT;
                 changeFragment(FragmentManager.INFO_FRAGMENT);
+                fragmentManager.popBackStack();
                 break;
+
             case 1:
+                current_fragment = FragmentManager.MANGA_FRAGMENT;
                 changeFragment(FragmentManager.MANGA_FRAGMENT);
+                fragmentManager.popBackStack();
                 break;
 
         }

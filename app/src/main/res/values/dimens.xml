@@ -5,12 +5,15 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <!-- Mangana Global Constants -->
-    <dimen name="card_corner_radius">4dp</dimen>
-    <dimen name="card_bottom_padding">8dp</dimen>
+    <dimen name="card_corner_radius">10dp</dimen>
+    <dimen name="card_padding">6dp</dimen>
     <dimen name="card_elevation_height">8dp</dimen>
 
     <!-- Manga List Conventional Dimensions -->
-    <dimen name="manga_cover_padding">16dp</dimen>
+    <dimen name="title_card_elevation_height">9dp</dimen>
+    <dimen name="manga_text_margin">4dp</dimen>
+    <dimen name="manga_cover_padding">12dp</dimen>
+    <dimen name="manga_title_text_margin">8dp</dimen>
     <dimen name="manga_title_font_size">8pt</dimen>
     <dimen name="manga_description_font_size">6pt</dimen>
     <dimen name="easter_egg">0dp</dimen>

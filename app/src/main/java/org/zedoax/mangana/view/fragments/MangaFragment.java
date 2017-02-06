@@ -1,8 +1,7 @@
-package org.zedoax.mangana.view;
+package org.zedoax.mangana.view.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,8 +13,8 @@ import android.view.ViewGroup;
 import org.zedoax.MangaPull;
 
 import org.zedoax.mangana.R;
-import org.zedoax.mangana.model.MangaAdapter;
 import org.zedoax.mangana.objects.MangaItem;
+import org.zedoax.mangana.view.MangaAdapter;
 
 /**
  * Created by Zedoax on 1/29/2017.

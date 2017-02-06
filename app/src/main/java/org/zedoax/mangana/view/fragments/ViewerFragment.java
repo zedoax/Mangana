@@ -1,17 +1,19 @@
-package org.zedoax.mangana.view;
+package org.zedoax.mangana.view.fragments;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import org.zedoax.MangaPull;
 import org.zedoax.mangana.R;
-import org.zedoax.mangana.model.ViewerAdapter;
+import org.zedoax.mangana.view.ViewerAdapter;
+import org.zedoax.mangana.view.generics.ViewPager;
 
 /**
  * Created by Zedoax on 2/3/2017.
@@ -20,12 +22,14 @@ import org.zedoax.mangana.model.ViewerAdapter;
 public class ViewerFragment extends Fragment implements ViewerAdapter.OnLastPageListener {
     private String index;
     private String chapter;
+    private String[] pages;
 
     private ViewPager mViewPager;
     private ViewerAdapter mViewerAdapter;
     private FloatingActionButton mFAB;
 
-    private String[] pages;
+    private OnFABClickedListener onFABClickedListener;
+    private boolean lastPage = false;
 
     public ViewerFragment() {
         pages = new String[0];
@@ -65,10 +69,16 @@ public class ViewerFragment extends Fragment implements ViewerAdapter.OnLastPage
     public void onLastPage(boolean isOnLastPage) {
         if(isOnLastPage) {
             mFAB.setVisibility(View.VISIBLE);
+            Animation animation = AnimationUtils.loadAnimation(mFAB.getContext(), R.anim.slide_in_right);
+            mFAB.startAnimation(animation);
         } else {
+            if(lastPage) {
+                Animation animation = AnimationUtils.loadAnimation(mFAB.getContext(), R.anim.slide_out_right);
+                mFAB.startAnimation(animation);
+            }
             mFAB.setVisibility(View.INVISIBLE);
         }
-
+        lastPage = isOnLastPage;
     }
 
     @Nullable
@@ -78,21 +88,20 @@ public class ViewerFragment extends Fragment implements ViewerAdapter.OnLastPage
 
         Bundle args = this.getArguments();
         this.index = args.getString("index");
+        this.chapter = args.getString("chapter");
 
-        if(this.chapter != null) {
-            if (!this.chapter.equals(args.getString("chapter"))) {
-                this.chapter = args.getString("chapter");
-                update(index, chapter);
-            } else {
-                finish();
-            }
-        } else {
-            this.chapter = args.getString("chapter");
-            update(index, chapter);
-        }
+        update(index, chapter);
 
         // Finds and Initializes the Floating Action Button for Next actions
         mFAB = (FloatingActionButton)view.findViewById(R.id.viewer_fab);
+        mFAB.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onFABClickedListener.onNextClicked(index, chapter);
+                    }
+                }
+        );
 
         mViewPager = (ViewPager) view.findViewById(R.id.viewer_pager);
 
@@ -107,6 +116,13 @@ public class ViewerFragment extends Fragment implements ViewerAdapter.OnLastPage
 
     }
 
+    public void setOnFABClickedListener(OnFABClickedListener listener) {
+        this.onFABClickedListener = listener;
+    }
 
+    public interface OnFABClickedListener {
+        void onNextClicked(String index, String chapter);
+
+    }
 
 }

@@ -1,4 +1,4 @@
-package org.zedoax.mangana.model;
+package org.zedoax.mangana.view;
 
 import android.content.Context;
 import android.support.v7.widget.CardView;
@@ -29,7 +29,7 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     private OnClickListener onClickListener;
 
-    public static class ChapterViewHolder extends RecyclerView.ViewHolder {
+    private static class ChapterViewHolder extends RecyclerView.ViewHolder {
         // Create variable holders for view components
         private CardView cLeft;
         private CardView cRight;
@@ -48,8 +48,9 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     }
 
-    public static class MangaViewHolder extends RecyclerView.ViewHolder {
+    private static class MangaViewHolder extends RecyclerView.ViewHolder {
         // Create variable holders for view components
+        private CardView mCard;
         private ImageView mCover;
         private TextView mTitle;
         private TextView mDirectories;
@@ -57,9 +58,10 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         private TextView mRank;
         private TextView mDescription;
 
-        public MangaViewHolder(View itemView) {
+        private MangaViewHolder(View itemView) {
             super(itemView);
             // Initialize the missing components, by finding their id
+            mCard = (CardView) itemView.findViewById(R.id.info_card);
             mCover = (ImageView) itemView.findViewById(R.id.info_cover);
             mTitle = (TextView) itemView.findViewById(R.id.info_title);
             mDirectories = (TextView) itemView.findViewById(R.id.info_directories);
@@ -90,6 +92,38 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Context context = parent.getContext();
+        switch (viewType) {
+            case 0:
+                MangaViewHolder v = new MangaViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.info_item, parent, false));
+                Animation vanimation = AnimationUtils.loadAnimation(parent.getContext(), R.anim.slide_in_left);
+                if (!mItem.getCoverUrl().isEmpty()) {
+                    Picasso.with(context).clearCache();
+                    Picasso.with(context).load(mItem.getCoverUrl())
+                            .error(R.drawable.error_drawable)
+                            .fade(500)
+                            .into(v.mCover);
+                } else {
+                    Log.e(TAG, "onBindViewHolder: Failed to Load Image Resource");
+                }
+                // Loads additional data into text fields
+                v.mTitle.setText(mItem.getTitle());
+                v.mDirectories.setText(mItem.getDirectories());
+                v.mAuthor.setText(mItem.getAuthor());
+                v.mRank.setText(mItem.getRank());
+                v.mDescription.setText(mItem.getDescription());
+                v.mCard.startAnimation(vanimation);
+                return v;
+            default:
+                ChapterViewHolder cv = new ChapterViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.info_chapter, parent, false));
+                Animation cvanimation = AnimationUtils.loadAnimation(parent.getContext(), R.anim.fade_in);
+                cv.cLeft.startAnimation(cvanimation);
+                cv.cRight.startAnimation(cvanimation);
+                return cv;
+
+        }
+
+        /*
         View v;
         switch (viewType) {
             case 0:
@@ -97,49 +131,34 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                 return new MangaViewHolder(v);
             default:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.info_chapter, parent, false);
-                Animation animation = AnimationUtils.loadAnimation(parent.getContext(), R.anim.slide_in_top);
+                Animation animation = AnimationUtils.loadAnimation(parent.getContext(), R.anim.slide_in_left);
                 v.startAnimation(animation);
                 return new ChapterViewHolder(v);
         }
+        */
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-
-        switch (getItemViewType(position)) {
-            case 0:
-                Context context = ((MangaViewHolder) holder).mCover.getContext();
-                if (!mItem.getCoverUrl().isEmpty()) {
-                    Picasso.with(context).clearCache();
-                    Picasso.with(context).load(mItem.getCoverUrl()).into(((MangaViewHolder) holder).mCover);
-                } else {
-                    Log.e(TAG, "onBindViewHolder: Failed to Load Image Resource");
-                }
-                // Loads additional data into text fields
-                ((MangaViewHolder) holder).mTitle.setText(mItem.getTitle());
-                ((MangaViewHolder) holder).mDirectories.setText(mItem.getDirectories());
-                ((MangaViewHolder) holder).mAuthor.setText(mItem.getAuthor());
-                ((MangaViewHolder) holder).mRank.setText(mItem.getRank());
-                ((MangaViewHolder) holder).mDescription.setText(mItem.getDescription());
-                break;
-            default:
-
-                ((ChapterViewHolder) holder).mLeft.setText(mDataset[(position * 2) - 2]);
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
+        switch (getItemViewType(holder.getAdapterPosition())) {
+            case 1:
+                ((ChapterViewHolder) holder).mLeft.setText(mDataset[(holder.getAdapterPosition() * 2) - 2]);
                 ((ChapterViewHolder) holder).mLeft.setOnClickListener(
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                onClickListener.onClick(mItem.getIndex(), mItem.getChapters()[(position * 2) - 2]);
+                                onClickListener.onClick(mItem.getIndex(), mItem.getChapters()[(holder.getAdapterPosition() * 2) - 2]);
                             }
                         }
                 );
-                if(position != getItemCount() - 1 || mDataset.length % 2 == 0) {
-                    ((ChapterViewHolder) holder).mRight.setText(mDataset[(position * 2) - 1]);
+                if (position != getItemCount() - 1 || mDataset.length % 2 == 0) {
+                    ((ChapterViewHolder) holder).cRight.setVisibility(View.VISIBLE);
+                    ((ChapterViewHolder) holder).mRight.setText(mDataset[(holder.getAdapterPosition() * 2) - 1]);
                     ((ChapterViewHolder) holder).mRight.setOnClickListener(
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    onClickListener.onClick(mItem.getIndex(), mItem.getChapters()[(position * 2) - 1]);
+                                    onClickListener.onClick(mItem.getIndex(), mItem.getChapters()[(holder.getAdapterPosition() * 2) - 1]);
                                 }
                             }
                     );
@@ -148,13 +167,7 @@ public class InfoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
                     ((ChapterViewHolder) holder).cRight.setVisibility(View.INVISIBLE);
 
                 }
-                /*
-                if (position * 2 == mDataset.length + 1) {
-                    ((ChapterViewHolder) holder).cRight.setVisibility(View.INVISIBLE);
-                }
-                */
         }
-
     }
 
     /**

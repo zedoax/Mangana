@@ -17,6 +17,7 @@ public class MangaPull {
     public String[] request_chapter(String manga_name, String manga_chapter) {
         try {
             return model._get_manga_chapter(manga_name, manga_chapter);
+
         } catch (IOException e) {
             e.printStackTrace();
 
