@@ -1,7 +1,6 @@
 package org.zedoax.mangana;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -10,10 +9,16 @@ import android.view.MenuItem;
 import org.zedoax.MangaPull;
 
 import org.zedoax.mangana.model.FragmentManager;
-import org.zedoax.mangana.view.MangaFragment;
+import org.zedoax.mangana.objects.MangaItem;
+import org.zedoax.mangana.view.fragments.InfoFragment;
+import org.zedoax.mangana.view.fragments.MangaFragment;
+import org.zedoax.mangana.view.fragments.ViewerFragment;
 
-public class MainActivity extends AppCompatActivity {
-    MangaPull mpull = new MangaPull();
+public class MainActivity extends AppCompatActivity implements MangaFragment.OnMangaCallbackListener, InfoFragment.OnInfoCallbackListener, ViewerFragment.OnFABClickedListener {
+
+    private FragmentManager fragmentManager;
+
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,20 +27,16 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        /*// Creates the initial Fragment Transaction to open manga page
-        // TODO: Replace with Fragment Manager
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        fragmentManager = FragmentManager.getInstance(this);
+        // ((InfoFragment)fragmentManager.getFragment(FragmentManager.INFO_FRAGMENT))
+        ((MangaFragment)fragmentManager.getFragment(FragmentManager.MANGA_FRAGMENT))
+                .setOnMangaCallbackListener(this);
+        ((InfoFragment)fragmentManager.getFragment(FragmentManager.INFO_FRAGMENT))
+                .setOnInfoCallbackListener(this);
 
-        // Fragment Transaction that moves new Manga Fragment to the Frame Layout container
-        transaction.replace(R.id.container, new MangaFragment());
-        transaction.addToBackStack(null);
+        fragmentManager.changeFragment(new MangaItem[0]);
 
-        // Commit the Transaction (Shows the new Fragment)
-        transaction.commit();*/
-
-        FragmentManager fragmentManager = new FragmentManager(this);
-        fragmentManager.changeFragment(FragmentManager.MANGA_FRAGMENT);
-
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
 
     }
 
@@ -59,5 +60,41 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+
     }
+
+    @Override
+    public void onCallback(String index, String chapter) {
+        fragmentManager.changeFragment(index, chapter);
+        ((ViewerFragment) fragmentManager.getFragment(FragmentManager.VIEWER_FRAGMENT)).setOnFABClickedListener(this);
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        fragmentManager.goBack();
+
+    }
+
+    @Override
+    public void onCallback(MangaItem mangaItem) {
+        fragmentManager.changeFragment(mangaItem);
+    }
+
+    @Override
+    public void onNextClicked(String index, String chapter) {
+        String[] chapters = ((InfoFragment) fragmentManager.getFragment(FragmentManager.INFO_FRAGMENT)).getChapters();
+        for (int i = 1; i < chapters.length - 1; i++) {
+            if(chapters[i].equals(chapter)) {
+                onBackPressed();
+                fragmentManager.changeFragment(index, chapters[i - 1]);
+                ((ViewerFragment) fragmentManager.getFragment(FragmentManager.VIEWER_FRAGMENT)).setOnFABClickedListener(this);
+
+
+            }
+        }
+
+    }
+
 }

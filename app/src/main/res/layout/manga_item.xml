@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="@dimen/card_elevation_height"
-        android:layout_marginBottom="@dimen/card_bottom_padding"
+        android:layout_marginBottom="@dimen/card_padding"
         app:cardCornerRadius="@dimen/card_corner_radius">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -20,6 +20,7 @@
                 android:scaleType="fitXY"
                 android:id="@+id/manga_cover"/>
             <TextView
+                android:paddingTop="@dimen/manga_cover_padding"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/manga_title_font_size"
@@ -43,6 +44,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/manga_cover_padding"
                 android:textSize="@dimen/manga_description_font_size"
                 android:layout_below="@id/manga_author"
                 android:layout_toEndOf="@id/manga_cover"

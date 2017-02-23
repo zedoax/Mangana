@@ -1,4 +1,4 @@
-package org.zedoax.mangana.model;
+package org.zedoax.mangana.view;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +12,6 @@ import android.widget.TextView;
 import org.zedoax.mangana.R;
 import org.zedoax.mangana.objects.MangaItem;
 
-import java.util.ArrayList;
-
 import it.sephiroth.android.library.picasso.Picasso;
 
 import static android.content.ContentValues.TAG;
@@ -25,6 +23,7 @@ import static android.content.ContentValues.TAG;
 
 public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> {
     private MangaItem[] mDataset;
+
     private OnClickListener onClickListener;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -62,9 +61,10 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
         // Grab the context, then load the image into a view
-        Context context = holder.mCover.getContext();
+        final Context context = holder.mCover.getContext();
         if(!mDataset[position].getCoverUrl().isEmpty()) {
-            Picasso.with(context).load(mDataset[position].getCoverUrl()).into(holder.mCover);
+            Picasso.with(context).clearCache();
+            Picasso.with(context).load(mDataset[position].getCoverUrl()).error(R.drawable.error_drawable).into(holder.mCover);
         } else {
             Log.e(TAG, "onBindViewHolder: Failed to Load Image Resource");
         }
@@ -77,11 +77,11 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        System.out.println(mDataset[holder.getAdapterPosition()].getInfoUrl());
+                        onClickListener.onClick(mDataset[holder.getAdapterPosition()]);
                     }
                 }
+
         );
-        System.out.println(mDataset[position].getDirectories());
 
     }
 
@@ -89,9 +89,13 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
      * Method to use when updating the dataset used by RecyclerView
      * @param dataset the data to replace the old
      */
-    public void update(ArrayList<MangaItem> dataset) {
-        mDataset = dataset.toArray(new MangaItem[dataset.size()]);
-        notifyDataSetChanged();
+    public void update(MangaItem[] dataset) {
+        mDataset = dataset;
+
+    }
+
+    public MangaItem get(int position) {
+        return mDataset[position];
 
     }
 
@@ -105,8 +109,8 @@ public class MangaAdapter extends RecyclerView.Adapter<MangaAdapter.ViewHolder> 
 
     }
 
-    public abstract class OnClickListener {
-        public abstract void onClick();
+    public interface OnClickListener {
+        void onClick(MangaItem item);
 
     }
 
